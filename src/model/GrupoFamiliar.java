@@ -1,4 +1,5 @@
 package model;
+import controller.GrupoFamiliarDAO;
 import controller.ProdutoDAO;
 
 public class GrupoFamiliar {
@@ -6,6 +7,7 @@ public class GrupoFamiliar {
     private String nome;
     private double gastos;
     ProdutoDAO produtoDAO = new ProdutoDAO();
+    GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
 
     public int getCodigo() {
         return this.codigo;
@@ -23,13 +25,7 @@ public class GrupoFamiliar {
         this.nome = nome;
     }
 
-    public double getGastos() throws Exception {
-        for(Produto produto : produtoDAO.listarProdutos()) {
-            if(produto.getCodigoGrupoFamiliar() == this.getCodigo()) {
-                this.gastos += produto.getPrecoTotal();
-            }
-        }
-        //this.setGastos(this.gastos);
+    public double getGastos() {
         return this.gastos;
     }
 

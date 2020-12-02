@@ -21,6 +21,8 @@ CREATE TABLE produto(
     precoUnitario DECIMAL NOT NULL,
     quantidade INT NOT NULL,
     precoTotal DECIMAL NOT NULL,
+    ultima_data_de_compra VARCHAR(20) NOT NULL,
+    data_de_compra_atual VARCHAR(20) NOT NULL,
     codigo_grupo_familiar INT NOT NULL,
     codigo_local_de_compra INT NOT NULL,
     CONSTRAINT fk_codigo_grupo_familiar FOREIGN KEY (codigo_grupo_familiar) REFERENCES grupo_familiar (codigo),

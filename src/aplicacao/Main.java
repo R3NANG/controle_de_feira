@@ -5,8 +5,6 @@ import controller.ProdutoDAO;
 import model.GrupoFamiliar;
 import model.LocalDeCompra;
 import model.Produto;
-
-import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
@@ -69,14 +67,18 @@ public class Main {
 								System.out.printf("| 1 - Domingo | 2 - Segunda | 3 - Terca | 4 - Quarta | 5 - Quinta | 6 - Sexta | 7 - Sabado |\n");
 								System.out.printf("Digite o Dia de Promocao do Local de Compra utilizando a base acima: ");
 								diaDePromocao = Integer.parseInt(entrada.nextLine());
-
-								LocalDeCompra localDeCompra = new LocalDeCompra();
-								localDeCompra.setNome(nome1);
-								localDeCompra.setEndereco(endereco);
-								localDeCompra.setTelefone(telefone);
-								localDeCompra.setEmail(email);
-								localDeCompra.setDiaDePromocao(diaDePromocao);
-								localDeCompraDAO.create(localDeCompra);
+								if(diaDePromocao >= 1 && diaDePromocao <= 7) {
+									LocalDeCompra localDeCompra = new LocalDeCompra();
+									localDeCompra.setNome(nome1);
+									localDeCompra.setEndereco(endereco);
+									localDeCompra.setTelefone(telefone);
+									localDeCompra.setEmail(email);
+									localDeCompra.setDiaDePromocao(diaDePromocao);
+									localDeCompraDAO.create(localDeCompra);
+								}
+								else {
+									System.out.println("\nDia de Promocao Invalido.");
+								}
 								break;
 
 							case 3:
@@ -95,17 +97,24 @@ public class Main {
 												String nome2;
 												double precoUnitario;
 												int quantidade;
+												String dataDeCompra;
 												System.out.printf("\nDigite o Nome do Produto: ");
 												nome2 = entrada.nextLine();
 												System.out.printf("Digite o Preco do Produto: ");
 												precoUnitario = Double.parseDouble(entrada.nextLine());
 												System.out.printf("Digite a Quantidade de Produtos: ");
 												quantidade = Integer.parseInt(entrada.nextLine());
+												System.out.printf("Digite a Data de Compra: ");
+												dataDeCompra = entrada.nextLine();
 
 												Produto produto = new Produto();
 												produto.setNome(nome2);
 												produto.setPrecoUnitario(precoUnitario);
 												produto.setQuantidade(quantidade);
+												grupoFamiliar1.setGastos(grupoFamiliar1.getGastos() + produto.getPrecoTotal());
+												grupoFamiliarDAO.update(grupoFamiliar1);
+												produto.setDataDeCompraAtual(dataDeCompra);
+												produto.setUltimaDataDeCompra(dataDeCompra);
 												produto.setCodigoGrupoFamiliar(grupoFamiliar1.getCodigo());
 												produto.setCodigoLocalDeCompra(localDeCompra1.getCodigo());
 												produtoDAO.create(produto);
@@ -158,6 +167,7 @@ public class Main {
 													System.out.println("\nCodigo do Grupo Familiar: " + grupoFamiliar2.getCodigo());
 													System.out.println("Nome do Grupo Familiar: " + grupoFamiliar2.getNome());
 													System.out.println("Gastos do Grupo Familiar: " + grupoFamiliar2.getGastos());
+													//grupoFamiliarDAO.update(grupoFamiliar2);
 													break;
 												}
 											}
@@ -265,7 +275,9 @@ public class Main {
 													System.out.println("Nome do Produto: " + produto.getNome());
 													System.out.println("Preco do Produto: " + produto.getPrecoUnitario());
 													System.out.println("Quantidade de Produtos: " + produto.getQuantidade());
-													System.out.println("Preco Total de Produtos: " + produto.getPrecoTotal());
+													System.out.println("Preco Total dos Produtos: " + produto.getPrecoTotal());
+													System.out.println("Ultima Data de Compra do Produto: " + produto.getUltimaDataDeCompra());
+													System.out.println("Data de Compra Atual do Produto: " + produto.getDataDeCompraAtual());
 													System.out.println("Codigo do Grupo Familiar do Produto: " + produto.getCodigoGrupoFamiliar());
 													System.out.println("Codigo do Local de Compra do Produto: " + produto.getCodigoLocalDeCompra());
 													break;
@@ -284,7 +296,9 @@ public class Main {
 													System.out.println("Nome do Produto: " + produto.getNome());
 													System.out.println("Preco do Produto: " + produto.getPrecoUnitario());
 													System.out.println("Quantidade de Produtos: " + produto.getQuantidade());
-													System.out.println("Preco Total de Produtos: " + produto.getPrecoTotal());
+													System.out.println("Preco Total dos Produtos: " + produto.getPrecoTotal());
+													System.out.println("Ultima Data de Compra do Produto: " + produto.getUltimaDataDeCompra());
+													System.out.println("Data de Compra Atual do Produto: " + produto.getDataDeCompraAtual());
 													System.out.println("Codigo do Grupo Familiar do Produto: " + produto.getCodigoGrupoFamiliar());
 													System.out.println("Codigo do Local de Compra do Produto: " + produto.getCodigoLocalDeCompra());
 												}
@@ -599,6 +613,7 @@ public class Main {
 														System.out.println("1 - Nome do Produto.");
 														System.out.println("2 - Preco do Produto.");
 														System.out.println("3 - Quantidade de Produtos.");
+														System.out.println("4 - Nova Data de Compra de Produtos.");
 														System.out.println("0 - Confirmar e Voltar ao Menu Anterior.");
 														System.out.printf("Digite sua Opcao: ");
 														op3 = Integer.parseInt(entrada.nextLine());
@@ -615,14 +630,48 @@ public class Main {
 																double precoUnitario;
 																System.out.printf("\nDigite o novo preco do Produto: ");
 																precoUnitario = Double.parseDouble(entrada.nextLine());
-																produto.setPrecoUnitario(precoUnitario);
+																if(precoUnitario > 0) {
+																	for(GrupoFamiliar grupoFamiliarAltera : grupoFamiliarDAO.listarGruposFamiliares()) {
+																		if(grupoFamiliarAltera.getCodigo() == produto.getCodigoGrupoFamiliar()) {
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() - produto.getPrecoTotal());
+																			produto.setPrecoUnitario(precoUnitario);
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() + produto.getPrecoTotal());
+																			grupoFamiliarDAO.update(grupoFamiliarAltera);
+																			break;
+																		}
+																	}
+																}
+																else {
+																	System.out.println("\nPreco Invalido.");
+																}
 																break;
 
 															case 3:
 																int quantidade;
 																System.out.printf("\nDigite a nova quantidade de Produtos: ");
 																quantidade = Integer.parseInt(entrada.nextLine());
-																produto.setQuantidade(quantidade);
+																if(quantidade >= 0) {
+																	for(GrupoFamiliar grupoFamiliarAltera : grupoFamiliarDAO.listarGruposFamiliares()) {
+																		if(grupoFamiliarAltera.getCodigo() == produto.getCodigoGrupoFamiliar()) {
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() - produto.getPrecoTotal());
+																			produto.setQuantidade(quantidade);
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() + produto.getPrecoTotal());
+																			grupoFamiliarDAO.update(grupoFamiliarAltera);
+																			break;
+																		}
+																	}
+																}
+																else {
+																	System.out.println("\nQuantidade Invalida.");
+																}
+																break;
+
+															case 4:
+																String data;
+																System.out.printf("\nDigite a nova data de compra do Produto: ");
+																data = entrada.nextLine();
+																produto.setUltimaDataDeCompra(produto.getDataDeCompraAtual());
+																produto.setDataDeCompraAtual(data);
 																break;
 
 															case 0:
@@ -652,6 +701,7 @@ public class Main {
 														System.out.println("1 - Nome do Produto.");
 														System.out.println("2 - Preco do Produto.");
 														System.out.println("3 - Quantidade de Produtos.");
+														System.out.println("4 - Nova Data de Compra de Produtos.");
 														System.out.println("0 - Confirmar e Voltar ao Menu Anterior.");
 														System.out.printf("Digite sua Opcao: ");
 														op3 = Integer.parseInt(entrada.nextLine());
@@ -668,14 +718,48 @@ public class Main {
 																double precoUnitario;
 																System.out.printf("\nDigite o novo preco do Produto: ");
 																precoUnitario = Double.parseDouble(entrada.nextLine());
-																produto.setPrecoUnitario(precoUnitario);
+																if(precoUnitario > 0) {
+																	for(GrupoFamiliar grupoFamiliarAltera : grupoFamiliarDAO.listarGruposFamiliares()) {
+																		if(grupoFamiliarAltera.getCodigo() == produto.getCodigoGrupoFamiliar()) {
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() - produto.getPrecoTotal());
+																			produto.setPrecoUnitario(precoUnitario);
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() + produto.getPrecoTotal());
+																			grupoFamiliarDAO.update(grupoFamiliarAltera);
+																			break;
+																		}
+																	}
+																}
+																else {
+																	System.out.println("\nPreco Invalido.");
+																}
 																break;
 
 															case 3:
 																int quantidade;
 																System.out.printf("\nDigite a nova quantidade de Produtos: ");
 																quantidade = Integer.parseInt(entrada.nextLine());
-																produto.setQuantidade(quantidade);
+																if(quantidade >= 0) {
+																	for(GrupoFamiliar grupoFamiliarAltera : grupoFamiliarDAO.listarGruposFamiliares()) {
+																		if(grupoFamiliarAltera.getCodigo() == produto.getCodigoGrupoFamiliar()) {
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() - produto.getPrecoTotal());
+																			produto.setQuantidade(quantidade);
+																			grupoFamiliarAltera.setGastos(grupoFamiliarAltera.getGastos() + produto.getPrecoTotal());
+																			grupoFamiliarDAO.update(grupoFamiliarAltera);
+																			break;
+																		}
+																	}
+																}
+																else {
+																	System.out.println("\nQuantidade Invalida.");
+																}
+																break;
+
+															case 4:
+																String data;
+																System.out.printf("\nDigite a nova data de compra do Produto: ");
+																data = entrada.nextLine();
+																produto.setUltimaDataDeCompra(produto.getDataDeCompraAtual());
+																produto.setDataDeCompraAtual(data);
 																break;
 
 															case 0:
@@ -849,7 +933,8 @@ public class Main {
 					break;
 
 				case 5:
-					produtoDAO.compararInflacao();
+					Produto produtoInflacao = new Produto();
+					produtoInflacao.compararInflacao();
 					break;
 
 				case 0:

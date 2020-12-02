@@ -12,7 +12,7 @@ import model.Produto;
 public class ProdutoDAO {
 
     public void create(Produto produto) throws Exception {
-        String sql = "INSERT INTO produto(nome, precoUnitario, quantidade, precoTotal, codigo_grupo_familiar, codigo_local_de_compra) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produto(nome, precoUnitario, quantidade, precoTotal, ultima_data_de_compra, data_de_compra_atual, codigo_grupo_familiar, codigo_local_de_compra) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement pstm = null;
@@ -27,8 +27,10 @@ public class ProdutoDAO {
             pstm.setDouble(2, produto.getPrecoUnitario());
             pstm.setInt(3, produto.getQuantidade());
             pstm.setDouble(4, produto.getPrecoTotal());
-            pstm.setInt(5, produto.getCodigoGrupoFamiliar());
-            pstm.setInt(6, produto.getCodigoLocalDeCompra());
+            pstm.setString(5, produto.getUltimaDataDeCompra());
+            pstm.setString(6, produto.getDataDeCompraAtual());
+            pstm.setInt(7, produto.getCodigoGrupoFamiliar());
+            pstm.setInt(8, produto.getCodigoLocalDeCompra());
 
             //Executando a query
             pstm.execute();
@@ -75,6 +77,8 @@ public class ProdutoDAO {
                 produto.setPrecoUnitario(rset.getDouble("precoUnitario"));
                 produto.setQuantidade(rset.getInt("quantidade"));
                 produto.setPrecoTotal(rset.getDouble("precoTotal"));
+                produto.setUltimaDataDeCompra(rset.getString("ultima_data_de_compra"));
+                produto.setDataDeCompraAtual(rset.getString("data_de_compra_atual"));
                 produto.setCodigoGrupoFamiliar(rset.getInt("codigo_grupo_familiar"));
                 produto.setCodigoLocalDeCompra(rset.getInt("codigo_local_de_compra"));
 
@@ -104,7 +108,7 @@ public class ProdutoDAO {
     }
 
     public void update(Produto produto) throws Exception {
-        String sql = "UPDATE produto SET nome = ?, preco = ?, quantidade = ? WHERE codigo = " + produto.getCodigo();
+        String sql = "UPDATE produto SET nome = ?, precoUnitario = ?, quantidade = ?, ultima_data_de_compra = ?, data_de_compra_atual = ? WHERE codigo = " + produto.getCodigo();
 
         Connection conn = null;
         PreparedStatement pstm = null;
@@ -116,6 +120,8 @@ public class ProdutoDAO {
             pstm.setString(1, produto.getNome());
             pstm.setDouble(2, produto.getPrecoUnitario());
             pstm.setInt(3, produto.getQuantidade());
+            pstm.setString(4, produto.getUltimaDataDeCompra());
+            pstm.setString(5, produto.getDataDeCompraAtual());
             pstm.execute();
             System.out.println("\nProduto alterado com sucesso!");
         } catch (Exception e) {
@@ -190,17 +196,6 @@ public class ProdutoDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void compararInflacao() throws Exception {
-        System.out.println("\nRelatório de Variação da Inflação x Variação dos Preços dos Produtos.");
-        AcessarInflacaoIBGE acessarInflacaoIBGE = new AcessarInflacaoIBGE();
-        acessarInflacaoIBGE.getValoresInflacao();
-
-        for(Produto produto : listarProdutos()) {
-            System.out.println("\nNome do Produto: " + produto.getNome());
-            System.out.println("Preco do Produto: " + produto.getPrecoUnitario());
         }
     }
 }

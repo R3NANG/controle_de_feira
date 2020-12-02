@@ -1,4 +1,5 @@
 package model;
+import controller.ProdutoDAO;
 
 public class Produto {
     private int codigo;
@@ -6,8 +7,11 @@ public class Produto {
     private double precoUnitario;
     private int quantidade;
     private double precoTotal;
+    private String ultimaDataDeCompra;
+    private String dataDeCompraAtual;
     private int codigoGrupoFamiliar;
     private int codigoLocalDeCompra;
+    ProdutoDAO produtoDAO = new ProdutoDAO();
 
     public int getCodigo() {
         return this.codigo;
@@ -49,6 +53,22 @@ public class Produto {
         this.precoTotal = precoTotal;
     }
 
+    public String getUltimaDataDeCompra() {
+        return this.ultimaDataDeCompra;
+    }
+
+    public void setUltimaDataDeCompra(String ultimaDataDeCompra) {
+        this.ultimaDataDeCompra = ultimaDataDeCompra;
+    }
+
+    public String getDataDeCompraAtual() {
+        return this.dataDeCompraAtual;
+    }
+
+    public void setDataDeCompraAtual(String dataDeCompraAtual) {
+        this.dataDeCompraAtual = dataDeCompraAtual;
+    }
+
     public int getCodigoGrupoFamiliar() {
         return this.codigoGrupoFamiliar;
     }
@@ -63,5 +83,16 @@ public class Produto {
 
     public void setCodigoLocalDeCompra(int codigoLocalDeCompra) {
         this.codigoLocalDeCompra = codigoLocalDeCompra;
+    }
+
+    public void compararInflacao() throws Exception {
+        System.out.println("\nRelatório de Variação da Inflação x Variação dos Preços dos Produtos.");
+        AcessarInflacaoIBGE acessarInflacaoIBGE = new AcessarInflacaoIBGE();
+        acessarInflacaoIBGE.getValoresInflacao();
+
+        for(Produto produto : produtoDAO.listarProdutos()) {
+            System.out.println("\nNome do Produto: " + produto.getNome());
+            System.out.println("Preco do Produto: " + produto.getPrecoUnitario());
+        }
     }
 }
