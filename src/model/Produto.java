@@ -85,14 +85,9 @@ public class Produto {
         this.codigoLocalDeCompra = codigoLocalDeCompra;
     }
 
-    public void compararInflacao() throws Exception {
+    public void exibirRelatorio() throws Exception {
         System.out.println("\nRelatório de Variação da Inflação x Variação dos Preços dos Produtos.");
         AcessarInflacaoIBGE acessarInflacaoIBGE = new AcessarInflacaoIBGE();
         acessarInflacaoIBGE.getValoresInflacao();
-
-        for(Produto produto : produtoDAO.listarProdutos()) {
-            System.out.println("\nNome do Produto: " + produto.getNome());
-            System.out.println("Preco do Produto: " + produto.getPrecoUnitario());
-        }
     }
 }

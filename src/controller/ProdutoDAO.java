@@ -2,11 +2,9 @@ package controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import factory.ConnectionFactory;
-import model.AcessarInflacaoIBGE;
 import model.Produto;
 
 public class ProdutoDAO {

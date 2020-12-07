@@ -1,13 +1,9 @@
 package model;
-import controller.GrupoFamiliarDAO;
-import controller.ProdutoDAO;
 
 public class GrupoFamiliar {
     private int codigo;
     private String nome;
     private double gastos;
-    ProdutoDAO produtoDAO = new ProdutoDAO();
-    GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
 
     public int getCodigo() {
         return this.codigo;
